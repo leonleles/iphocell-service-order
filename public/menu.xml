@@ -44,7 +44,28 @@
               </menuitem>
         </menu>
     </menuitem>
-    
+
+    <menuitem label='_t{General}'>
+        <icon>far:file-alt fa-fw</icon>
+        <menu>
+            <menuitem label='_t{Send document}'>
+                <icon>fas:cloud-upload-alt fa-fw</icon>
+                <action>SystemDocumentUploadForm</action>
+            </menuitem>
+        </menu>
+    </menuitem>
+
+    <menuitem label='Clientes'>
+        <icon>fa:users fa-fw</icon>
+        <action>IphoCellClientList</action>
+        <menu>
+            <menuitem  label='Novo'>
+                <icon>fa:user-plus fa-fw</icon>
+                <action>IphoCellClientForm</action>
+            </menuitem>
+        </menu>
+    </menuitem>
+
     <menuitem label='_t{Documents}'>
         <icon>far:file-alt fa-fw</icon>
         <menu>
@@ -66,7 +87,7 @@
               </menuitem>
         </menu>
     </menuitem>
-    
+
     <menuitem label='Logs'>
         <icon>fas:desktop fa-fw</icon>
         <menu>
@@ -100,7 +121,7 @@
               </menuitem>
         </menu>
     </menuitem>
-        
+
     <menuitem label='Common pages'>
         <menu>
             <menuitem label='Common page 1'>
@@ -117,7 +138,7 @@
             </menuitem>
         </menu>
     </menuitem>
-    
+
     <menuitem label='Logout'>
         <action>LoginForm#method=onLogout#static=1</action>
         <icon>fas:sign-out-alt fa-fw</icon>

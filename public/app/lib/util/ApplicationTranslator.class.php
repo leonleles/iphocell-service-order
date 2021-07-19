@@ -135,6 +135,9 @@ class ApplicationTranslator
         $this->messages['en'][] = 'Download';
         $this->messages['en'][] = 'Next';
         $this->messages['en'][] = 'Documents';
+        $this->messages['en'][] = 'General';
+        $this->messages['en'][] = 'Customers';
+        $this->messages['en'][] = 'See all';
         $this->messages['en'][] = 'Permission';
         $this->messages['en'][] = 'Unit';
         $this->messages['en'][] = 'Units';
@@ -436,6 +439,9 @@ class ApplicationTranslator
         $this->messages['pt'][] = 'Download';
         $this->messages['pt'][] = 'Próximo';
         $this->messages['pt'][] = 'Documentos';
+        $this->messages['pt'][] = 'Geral';
+        $this->messages['pt'][] = 'Clientes';
+        $this->messages['pt'][] = 'Ver todos';
         $this->messages['pt'][] = 'Permissão';
         $this->messages['pt'][] = 'Unidade';
         $this->messages['pt'][] = 'Unidades';
@@ -727,6 +733,9 @@ class ApplicationTranslator
         $this->messages['es'][] = 'Mis documentos';
         $this->messages['es'][] = 'Compartidos conmigo';
         $this->messages['es'][] = 'Documento';
+        $this->messages['es'][] = 'General';
+        $this->messages['es'][] = 'Clientes';
+        $this->messages['es'][] = 'Ver todo';
         $this->messages['es'][] = 'Archivo';
         $this->messages['es'][] = 'Título';
         $this->messages['es'][] = 'Descripción';
