@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Tempo de geração: 19/07/2021 às 22:57
--- Versão do servidor: 8.0.24
+-- Tempo de geração: 20/07/2021 às 15:46
+-- Versão do servidor: 8.0.26
 -- Versão do PHP: 7.4.20
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -29,17 +29,68 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `iphocell_client` (
   `ipc_client_id` int NOT NULL,
-  `ipc_client_name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `ipc_client_cpf` varchar(11) COLLATE utf8mb4_general_ci NOT NULL,
-  `ipc_client_birthday` date NOT NULL
+  `ipc_client_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `ipc_client_cpf` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `ipc_client_birthday` date NOT NULL,
+  `ipc_client_exclude` int DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Despejando dados para a tabela `iphocell_client`
 --
 
-INSERT INTO `iphocell_client` (`ipc_client_id`, `ipc_client_name`, `ipc_client_cpf`, `ipc_client_birthday`) VALUES
-(32, 'dfdfdfds', '05063839118', '2021-07-08');
+INSERT INTO `iphocell_client` (`ipc_client_id`, `ipc_client_name`, `ipc_client_cpf`, `ipc_client_birthday`, `ipc_client_exclude`) VALUES
+(32, 'Leonardo Leles Alves', '05063839118', '2026-09-17', 0),
+(33, 'A Maria betânica', '05063839118', '2021-07-13', 0),
+(35, 'José Alves', '12312321321', '2021-07-17', 0),
+(36, 'Joana silve', '12312331313', '2021-07-22', 0),
+(37, 'Leonardo Leles Alves', '12312321321', '2021-07-20', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `iphocell_order_status`
+--
+
+CREATE TABLE `iphocell_order_status` (
+  `ipc_os_id` int NOT NULL,
+  `ipc_os_name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `ipc_os_exclude` int DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `iphocell_order_status`
+--
+
+INSERT INTO `iphocell_order_status` (`ipc_os_id`, `ipc_os_name`, `ipc_os_exclude`) VALUES
+(1, 'Aguardando aparelho', 0),
+(2, 'Em andamento', 0),
+(3, 'Finalizado', 0),
+(4, 'Entregue', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `iphocell_service_order`
+--
+
+CREATE TABLE `iphocell_service_order` (
+  `ipc_so_id` int NOT NULL,
+  `ipc_so_title` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `ipc_so_description` text COLLATE utf8mb4_general_ci NOT NULL,
+  `ipc_so_opening_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `ipc_so_prediction_date` datetime DEFAULT NULL,
+  `ipc_so_status_id` int NOT NULL,
+  `ipc_so_client_id` int NOT NULL,
+  `ipc_so_exclude` int NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `iphocell_service_order`
+--
+
+INSERT INTO `iphocell_service_order` (`ipc_so_id`, `ipc_so_title`, `ipc_so_description`, `ipc_so_opening_date`, `ipc_so_prediction_date`, `ipc_so_status_id`, `ipc_so_client_id`, `ipc_so_exclude`) VALUES
+(3, 'Xiomi Redmi 5', '- Trocar tela e outros periféricos;', '2021-07-20 13:02:48', '2021-07-30 10:02:16', 1, 32, 0);
 
 -- --------------------------------------------------------
 
@@ -49,15 +100,15 @@ INSERT INTO `iphocell_client` (`ipc_client_id`, `ipc_client_name`, `ipc_client_c
 
 CREATE TABLE `system_access_log` (
   `id` int NOT NULL,
-  `sessionid` text COLLATE utf8mb4_general_ci,
-  `login` text COLLATE utf8mb4_general_ci,
+  `sessionid` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `login` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `login_time` timestamp NULL DEFAULT NULL,
-  `login_year` varchar(4) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `login_month` varchar(2) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `login_day` varchar(2) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `login_year` varchar(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `login_month` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `login_day` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `logout_time` timestamp NULL DEFAULT NULL,
-  `impersonated` char(1) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `access_ip` varchar(45) COLLATE utf8mb4_general_ci DEFAULT NULL
+  `impersonated` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `access_ip` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -82,7 +133,14 @@ INSERT INTO `system_access_log` (`id`, `sessionid`, `login`, `login_time`, `logi
 (15, '9ac54e1fbfac44feb698e03cdae76a82', 'admin', '2021-07-18 15:10:42', '2021', '07', '18', '2021-07-18 15:19:21', 'N', '172.23.0.1'),
 (16, '256ff0484dd6fcd6d91ca9b17ab1b6d2', 'admin', '2021-07-18 15:19:27', '2021', '07', '18', NULL, 'N', '172.23.0.1'),
 (17, 'd93a05d63895965f16a68c126e312958', 'admin', '2021-07-18 18:39:43', '2021', '07', '18', '2021-07-18 19:15:36', 'N', '172.23.0.1'),
-(18, 'b871087c5c3b559a54168fb1fcdd8ca2', 'admin', '2021-07-18 19:16:07', '2021', '07', '18', NULL, 'N', '172.23.0.1');
+(18, 'b871087c5c3b559a54168fb1fcdd8ca2', 'admin', '2021-07-18 19:16:07', '2021', '07', '18', NULL, 'N', '172.23.0.1'),
+(19, 'e5046c8611d8837d1ecd1b635e800073', 'admin', '2021-07-19 23:26:57', '2021', '07', '19', NULL, 'N', '172.18.0.1'),
+(20, 'fdc97f9599c0cf4dcbfc8977e8106de8', 'admin', '2021-07-20 08:26:00', '2021', '07', '20', '2021-07-20 09:11:14', 'N', '172.18.0.1'),
+(21, 'cbd2e0222db7e4495aa3b878a967fc8b', 'admin', '2021-07-20 09:11:28', '2021', '07', '20', '2021-07-20 09:11:56', 'N', '172.18.0.1'),
+(22, '61071bc2c0482c0e2acdbce4ee3a7045', 'admin', '2021-07-20 09:22:39', '2021', '07', '20', '2021-07-20 09:26:33', 'N', '172.18.0.1'),
+(23, '9c6e694c9208b479f6d8cedfd716709d', 'admin', '2021-07-20 09:29:47', '2021', '07', '20', '2021-07-20 10:05:46', 'N', '172.18.0.1'),
+(24, 'ea481e628f083b2d968d3368dcaab032', 'admin', '2021-07-20 10:05:48', '2021', '07', '20', '2021-07-20 12:05:50', 'N', '172.18.0.1'),
+(25, '19563d2921e92db17e0a96b3dce157de', 'admin', '2021-07-20 12:05:52', '2021', '07', '20', NULL, 'N', '172.18.0.1');
 
 -- --------------------------------------------------------
 
@@ -93,23 +151,23 @@ INSERT INTO `system_access_log` (`id`, `sessionid`, `login`, `login_time`, `logi
 CREATE TABLE `system_change_log` (
   `id` int NOT NULL,
   `logdate` timestamp NULL DEFAULT NULL,
-  `login` text COLLATE utf8mb4_general_ci,
-  `tablename` text COLLATE utf8mb4_general_ci,
-  `primarykey` text COLLATE utf8mb4_general_ci,
-  `pkvalue` text COLLATE utf8mb4_general_ci,
-  `operation` text COLLATE utf8mb4_general_ci,
-  `columnname` text COLLATE utf8mb4_general_ci,
-  `oldvalue` text COLLATE utf8mb4_general_ci,
-  `newvalue` text COLLATE utf8mb4_general_ci,
-  `access_ip` text COLLATE utf8mb4_general_ci,
-  `transaction_id` text COLLATE utf8mb4_general_ci,
-  `log_trace` text COLLATE utf8mb4_general_ci,
-  `session_id` text COLLATE utf8mb4_general_ci,
-  `class_name` text COLLATE utf8mb4_general_ci,
-  `php_sapi` text COLLATE utf8mb4_general_ci,
-  `log_year` varchar(4) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `log_month` varchar(2) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `log_day` varchar(2) COLLATE utf8mb4_general_ci DEFAULT NULL
+  `login` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `tablename` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `primarykey` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `pkvalue` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `operation` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `columnname` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `oldvalue` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `newvalue` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `access_ip` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `transaction_id` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `log_trace` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `session_id` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `class_name` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `php_sapi` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `log_year` varchar(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `log_month` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `log_day` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -121,12 +179,12 @@ CREATE TABLE `system_change_log` (
 CREATE TABLE `system_document` (
   `id` int NOT NULL,
   `system_user_id` int DEFAULT NULL,
-  `title` text COLLATE utf8mb4_general_ci,
-  `description` text COLLATE utf8mb4_general_ci,
+  `title` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `category_id` int DEFAULT NULL,
   `submission_date` date DEFAULT NULL,
   `archive_date` date DEFAULT NULL,
-  `filename` text COLLATE utf8mb4_general_ci
+  `filename` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -137,7 +195,7 @@ CREATE TABLE `system_document` (
 
 CREATE TABLE `system_document_category` (
   `id` int NOT NULL,
-  `name` text COLLATE utf8mb4_general_ci
+  `name` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -179,7 +237,7 @@ CREATE TABLE `system_document_user` (
 
 CREATE TABLE `system_group` (
   `id` int NOT NULL,
-  `name` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -236,7 +294,9 @@ INSERT INTO `system_group_program` (`id`, `system_group_id`, `system_program_id`
 (27, 1, 62),
 (28, 2, 62),
 (29, 1, 63),
-(30, 2, 63);
+(30, 2, 63),
+(31, 1, 65),
+(32, 2, 65);
 
 -- --------------------------------------------------------
 
@@ -248,10 +308,10 @@ CREATE TABLE `system_message` (
   `id` int NOT NULL,
   `system_user_id` int DEFAULT NULL,
   `system_user_to_id` int DEFAULT NULL,
-  `subject` text COLLATE utf8mb4_general_ci,
-  `message` text COLLATE utf8mb4_general_ci,
-  `dt_message` text COLLATE utf8mb4_general_ci,
-  `checked` char(1) COLLATE utf8mb4_general_ci DEFAULT NULL
+  `subject` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `message` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `dt_message` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `checked` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -264,13 +324,13 @@ CREATE TABLE `system_notification` (
   `id` int NOT NULL,
   `system_user_id` int DEFAULT NULL,
   `system_user_to_id` int DEFAULT NULL,
-  `subject` text COLLATE utf8mb4_general_ci,
-  `message` text COLLATE utf8mb4_general_ci,
-  `dt_message` text COLLATE utf8mb4_general_ci,
-  `action_url` text COLLATE utf8mb4_general_ci,
-  `action_label` text COLLATE utf8mb4_general_ci,
-  `icon` text COLLATE utf8mb4_general_ci,
-  `checked` char(1) COLLATE utf8mb4_general_ci DEFAULT NULL
+  `subject` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `message` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `dt_message` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `action_url` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `action_label` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `icon` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `checked` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -280,8 +340,8 @@ CREATE TABLE `system_notification` (
 --
 
 CREATE TABLE `system_preference` (
-  `id` text COLLATE utf8mb4_general_ci,
-  `value` text COLLATE utf8mb4_general_ci
+  `id` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `value` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -292,8 +352,8 @@ CREATE TABLE `system_preference` (
 
 CREATE TABLE `system_program` (
   `id` int NOT NULL,
-  `name` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `controller` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `controller` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -363,7 +423,9 @@ INSERT INTO `system_program` (`id`, `name`, `controller`) VALUES
 (60, 'System Preference form', 'SystemPreferenceForm'),
 (61, 'System Support form', 'SystemSupportForm'),
 (62, 'Listagem de Clientes', 'IphoCellClientList'),
-(63, 'Formulário de cliente', 'IphoCellClientForm');
+(63, 'Formulário de cliente', 'IphoCellClientForm'),
+(64, 'Consulta de Serviço', 'IphoCellConsultService'),
+(65, 'Manutenções', 'IphoCellServiceOrderList');
 
 -- --------------------------------------------------------
 
@@ -373,22 +435,22 @@ INSERT INTO `system_program` (`id`, `name`, `controller`) VALUES
 
 CREATE TABLE `system_request_log` (
   `id` int NOT NULL,
-  `endpoint` text COLLATE utf8mb4_general_ci,
-  `logdate` text COLLATE utf8mb4_general_ci,
-  `log_year` varchar(4) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `log_month` varchar(2) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `log_day` varchar(2) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `session_id` text COLLATE utf8mb4_general_ci,
-  `login` text COLLATE utf8mb4_general_ci,
-  `access_ip` text COLLATE utf8mb4_general_ci,
-  `class_name` text COLLATE utf8mb4_general_ci,
-  `http_host` text COLLATE utf8mb4_general_ci,
-  `server_port` text COLLATE utf8mb4_general_ci,
-  `request_uri` text COLLATE utf8mb4_general_ci,
-  `request_method` text COLLATE utf8mb4_general_ci,
-  `query_string` text COLLATE utf8mb4_general_ci,
-  `request_headers` text COLLATE utf8mb4_general_ci,
-  `request_body` text COLLATE utf8mb4_general_ci,
+  `endpoint` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `logdate` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `log_year` varchar(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `log_month` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `log_day` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `session_id` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `login` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `access_ip` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `class_name` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `http_host` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `server_port` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `request_uri` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `request_method` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `query_string` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `request_headers` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `request_body` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `request_duration` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -401,20 +463,20 @@ CREATE TABLE `system_request_log` (
 CREATE TABLE `system_sql_log` (
   `id` int NOT NULL,
   `logdate` timestamp NULL DEFAULT NULL,
-  `login` text COLLATE utf8mb4_general_ci,
-  `database_name` text COLLATE utf8mb4_general_ci,
-  `sql_command` text COLLATE utf8mb4_general_ci,
-  `statement_type` text COLLATE utf8mb4_general_ci,
-  `access_ip` varchar(45) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `transaction_id` text COLLATE utf8mb4_general_ci,
-  `log_trace` text COLLATE utf8mb4_general_ci,
-  `session_id` text COLLATE utf8mb4_general_ci,
-  `class_name` text COLLATE utf8mb4_general_ci,
-  `php_sapi` text COLLATE utf8mb4_general_ci,
-  `request_id` text COLLATE utf8mb4_general_ci,
-  `log_year` varchar(4) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `log_month` varchar(2) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `log_day` varchar(2) COLLATE utf8mb4_general_ci DEFAULT NULL
+  `login` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `database_name` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `sql_command` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `statement_type` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `access_ip` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `transaction_id` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `log_trace` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `session_id` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `class_name` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `php_sapi` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `request_id` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `log_year` varchar(4) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `log_month` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `log_day` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -425,8 +487,8 @@ CREATE TABLE `system_sql_log` (
 
 CREATE TABLE `system_unit` (
   `id` int NOT NULL,
-  `name` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `connection_name` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `connection_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -437,13 +499,13 @@ CREATE TABLE `system_unit` (
 
 CREATE TABLE `system_user` (
   `id` int NOT NULL,
-  `name` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `login` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `password` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `email` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `login` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `password` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `frontpage_id` int DEFAULT NULL,
   `system_unit_id` int DEFAULT NULL,
-  `active` char(1) COLLATE utf8mb4_general_ci DEFAULT NULL
+  `active` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -505,6 +567,20 @@ CREATE TABLE `system_user_unit` (
 --
 ALTER TABLE `iphocell_client`
   ADD PRIMARY KEY (`ipc_client_id`);
+
+--
+-- Índices de tabela `iphocell_order_status`
+--
+ALTER TABLE `iphocell_order_status`
+  ADD PRIMARY KEY (`ipc_os_id`);
+
+--
+-- Índices de tabela `iphocell_service_order`
+--
+ALTER TABLE `iphocell_service_order`
+  ADD PRIMARY KEY (`ipc_so_id`),
+  ADD KEY `fk_order_status` (`ipc_so_status_id`),
+  ADD KEY `fk_client` (`ipc_so_client_id`);
 
 --
 -- Índices de tabela `system_access_log`
@@ -631,11 +707,30 @@ ALTER TABLE `system_user_unit`
 -- AUTO_INCREMENT de tabela `iphocell_client`
 --
 ALTER TABLE `iphocell_client`
-  MODIFY `ipc_client_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `ipc_client_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+
+--
+-- AUTO_INCREMENT de tabela `iphocell_order_status`
+--
+ALTER TABLE `iphocell_order_status`
+  MODIFY `ipc_os_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT de tabela `iphocell_service_order`
+--
+ALTER TABLE `iphocell_service_order`
+  MODIFY `ipc_so_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Restrições para tabelas despejadas
 --
+
+--
+-- Restrições para tabelas `iphocell_service_order`
+--
+ALTER TABLE `iphocell_service_order`
+  ADD CONSTRAINT `fk_client` FOREIGN KEY (`ipc_so_client_id`) REFERENCES `iphocell_client` (`ipc_client_id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_order_status` FOREIGN KEY (`ipc_so_status_id`) REFERENCES `iphocell_order_status` (`ipc_os_id`) ON UPDATE CASCADE;
 
 --
 -- Restrições para tabelas `system_group_program`
