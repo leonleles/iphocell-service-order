@@ -280,9 +280,6 @@ class IphoCellServiceOrderList extends TPage
             $criteria = new TCriteria;
             $criteria->add(new TFilter('ipc_so_exclude', '=', 0));
 
-            $param['order'] = 'ipc_so_opening_date';
-            $param['direction'] = 'desc';
-
             $criteria->setProperties($param); // order, offset
             $criteria->setProperty('limit', $limit);
 

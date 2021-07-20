@@ -70,6 +70,7 @@ class IphoCellClientList extends TPage
         // creates the DataGrid
         $this->datagrid = new BootstrapDatagridWrapper(new TDataGrid);
         $this->datagrid->width = "100%";
+        $this->datagrid->datatable = 'true';
 
         // creates the datagrid columns
         $col_id = new TDataGridColumn('ipc_client_id', 'Id', 'right');
