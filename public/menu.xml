@@ -67,7 +67,7 @@
     </menuitem>
 
     <menuitem label='Consulta de Serviço'>
-        <icon>fa:configs fa-fw</icon>
+        <icon>fa:search fa-fw</icon>
         <action>IphoCellConsultService</action>
     </menuitem>
 
