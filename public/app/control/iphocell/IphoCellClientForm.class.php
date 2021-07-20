@@ -28,6 +28,7 @@ class IphoCellClientForm extends TPage
 
         $id = new THidden('ipc_client_id');
         $name = new TEntry('ipc_client_name');
+        $name->setMaxLength(255);
         $cpf = new TEntry('ipc_client_cpf');
         $cpf->setMask('000.000.000-00', true);
         $birthday = new TDate('ipc_client_birthday');
