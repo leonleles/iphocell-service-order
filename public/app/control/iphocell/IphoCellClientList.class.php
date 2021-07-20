@@ -50,9 +50,14 @@ class IphoCellClientList extends TPage
         // creates the form
         $this->form = new BootstrapFormBuilder('form_search_costumers');
         $this->form->setFormTitle('Clientes');
+        $this->form->setFieldSizes('100%');
+        $this->form->generateAria();
 
         $name = new TEntry('name');
-        $this->form->addFields([new TLabel('Nome:')], [$name]);
+
+        $row = $this->form->addFields([new TLabel('Nome:')], [$name]);
+
+        $row->layout = ['col-sm-12', 'col-sm-12'];
 
         // add form actions
         $this->form->addAction('Buscar', new TAction([$this, 'onSearch']), 'fa:search blue');

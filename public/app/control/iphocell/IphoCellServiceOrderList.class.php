@@ -11,6 +11,7 @@ use Adianti\Widget\Container\TPanelGroup;
 use Adianti\Widget\Container\TVBox;
 use Adianti\Widget\Datagrid\TDataGrid;
 use Adianti\Widget\Datagrid\TDataGridAction;
+use Adianti\Widget\Datagrid\TDataGridActionGroup;
 use Adianti\Widget\Datagrid\TDataGridColumn;
 use Adianti\Widget\Datagrid\TPageNavigation;
 use Adianti\Widget\Dialog\TMessage;
@@ -52,7 +53,9 @@ class IphoCellServiceOrderList extends TPage
         $this->form->setFormTitle('Manutenções');
 
         $name = new TEntry('name');
-        $this->form->addFields([new TLabel('Nome:')], [$name]);
+        $row = $this->form->addFields([new TLabel('Nome:')], [$name]);
+
+        $row->layout = ['col-sm-12', 'col-sm-12'];
 
         // add form actions
         $this->form->addAction('Buscar', new TAction([$this, 'onSearch']), 'fa:search blue');
@@ -60,29 +63,69 @@ class IphoCellServiceOrderList extends TPage
         $this->form->addActionLink('Novo', new TAction(['IphoCellClientForm', 'onClear']), 'fa:plus-circle green');
 
         // keep the form filled with the search data
-        $this->form->setData(TSession::getValue('IphoCellClientList_filter_data'));
+        $this->form->setData(TSession::getValue('IphoCellServiceOrder_filter_data'));
 
         // creates the DataGrid
         $this->datagrid = new BootstrapDatagridWrapper(new TDataGrid);
+        $this->datagrid->datatable = 'true';
         $this->datagrid->width = "100%";
 
         // creates the datagrid columns
         $col_id = new TDataGridColumn('ipc_so_id', 'Id', 'right');
-        $col_name = new TDataGridColumn('ipc_so_title', 'Nome', 'left');
-        $col_cpf = new TDataGridColumn('ipc_so_description', 'CPF', 'left');
-        $col_birthday = new TDataGridColumn('ipc_so_status_id', 'Data de Nascimento', 'left');
+        $col_name = new TDataGridColumn('ipc_so_title', 'Título', 'left');
+        $col_description = new TDataGridColumn('ipc_so_description', 'Descrição', 'left');
+        $col_opening = new TDataGridColumn('ipc_so_opening_date', 'Abertura', 'left');
+        $col_prediction = new TDataGridColumn('ipc_so_prediction_date', 'Previsão', 'left');
+        $col_client = new TDataGridColumn('{customer->ipc_client_name}', 'Cliente', 'left');
+        $row_status = $col_status = new TDataGridColumn('{status->ipc_os_name}', 'Status', 'left');
+
+        $row_status->setTransformer(function ($value, $object, $row) {
+            $style = '';
+
+            if ($object->status->ipc_os_id == 1) {
+                $style = 'color: #007bff';
+            } else if ($object->status->ipc_os_id == 2) {
+                $style = 'color: #dd5a43';
+            } else if ($object->status->ipc_os_id == 3) {
+                $style = 'color: #ff00ed';
+            } else if ($object->status->ipc_os_id == 4) {
+                $style = 'color: #31b131';
+            }
+
+            return "<span style='$style'>$value</span>";
+        });
+
+        $col_opening->setTransformer(function ($value, $object, $row) {
+            return date('d/m/Y H:i', strtotime($value));
+        });
+        $col_prediction->setTransformer(function ($value, $object, $row) {
+            if (!$value) return $value;
+
+            return date('d/m/Y H:i', strtotime($value));
+        });
 
         $this->datagrid->addColumn($col_name);
-        $this->datagrid->addColumn($col_cpf);
-        $this->datagrid->addColumn($col_birthday);
+        $this->datagrid->addColumn($col_description);
+        $this->datagrid->addColumn($col_opening);
+        $this->datagrid->addColumn($col_prediction);
+        $this->datagrid->addColumn($col_client);
+        $this->datagrid->addColumn($col_status);
 
-        $col_name->setAction(new TAction([$this, 'onReload']), ['order' => 'ipc_client_name']);
+        $col_name->setAction(new TAction([$this, 'onReload']), ['order' => 'ipc_so_title']);
 
         $action1 = new TDataGridAction(['IphoCellClientForm', 'onEdit'], ['key' => '{ipc_so_id}']);
-        $action2 = new TDataGridAction([$this, 'onDelete'], ['key' => '{ipc_so_id}']);
+        $action1->setLabel('Editar');
+        $action1->setImage('fa:edit blue');
 
-        $this->datagrid->addAction($action1, 'Editar', 'far:edit blue');
-        $this->datagrid->addAction($action2, 'Deletar', 'far:trash-alt red');
+        $action2 = new TDataGridAction([$this, 'onDelete'], ['key' => '{ipc_so_id}']);
+        $action2->setLabel('Apagar');
+        $action2->setImage('fa:trash-alt red');
+
+        $action_group = new TDataGridActionGroup('', 'fa:th');
+        $action_group->addAction($action1);
+        $action_group->addAction($action2);
+
+        $this->datagrid->addActionGroup($action_group);
 
         // create the datagrid model
         $this->datagrid->createModel();
@@ -157,12 +200,12 @@ class IphoCellServiceOrderList extends TPage
         $data = $this->form->getData();
 
         if (isset($data->name)) {
-            $filter = new TFilter('ipc_client_name', 'like', "%{$data->name}%");
+            $filter = new TFilter('ipc_so_title', 'like', "%{$data->name}%");
 
             // stores the filter in the session
             TSession::setValue('Find_name_filter', $filter);
             TSession::setValue('Name_filter', $data->name);
-            TSession::setValue('IphoCellClientList_filter_data', (object)['name' => $data->name]);
+            TSession::setValue('IphoCellServiceOrder_filter_data', (object)['name' => $data->name]);
 
             // fill the form with data again
             $this->form->setData($data);
