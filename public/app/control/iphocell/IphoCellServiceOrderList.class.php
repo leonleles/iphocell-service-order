@@ -3,6 +3,7 @@
 use Adianti\Control\TAction;
 use Adianti\Control\TPage;
 use Adianti\Database\TCriteria;
+use Adianti\Database\TExpression;
 use Adianti\Database\TFilter;
 use Adianti\Database\TRepository;
 use Adianti\Database\TTransaction;
@@ -16,9 +17,13 @@ use Adianti\Widget\Datagrid\TDataGridColumn;
 use Adianti\Widget\Datagrid\TPageNavigation;
 use Adianti\Widget\Dialog\TMessage;
 use Adianti\Widget\Dialog\TQuestion;
+use Adianti\Widget\Form\TDate;
 use Adianti\Widget\Form\TEntry;
 use Adianti\Widget\Form\TLabel;
 use Adianti\Widget\Util\TXMLBreadCrumb;
+use Adianti\Widget\Wrapper\TDBCombo;
+use Adianti\Widget\Wrapper\TDBMultiSearch;
+use Adianti\Widget\Wrapper\TDBUniqueSearch;
 use Adianti\Wrapper\BootstrapDatagridWrapper;
 use Adianti\Wrapper\BootstrapFormBuilder;
 
@@ -52,10 +57,62 @@ class IphoCellServiceOrderList extends TPage
         $this->form = new BootstrapFormBuilder('form_search_services');
         $this->form->setFormTitle('Manutenções');
 
-        $name = new TEntry('name');
-        $row = $this->form->addFields([new TLabel('Nome:')], [$name]);
+        $filter_customer = new TCriteria;
+        $filter_customer->add(new TFilter('ipc_client_exclude', '=', '0'));
 
-        $row->layout = ['col-sm-12', 'col-sm-12'];
+        $filter_status = new TCriteria;
+        $filter_status->add(new TFilter('ipc_os_exclude', '=', '0'));
+
+        $search = new TEntry('search');
+        $search->setSize('100%');
+        $this->form->generateAria();
+
+        $customer = new TDBUniqueSearch(
+            'customer_id',
+            'iphocell',
+            'IphoCellClient',
+            'ipc_client_id',
+            'ipc_client_name',
+            'ipc_client_name',
+            $filter_customer
+        );
+
+        $customer->setSize('100%');
+
+        $status = new TDBCombo(
+            'status_id',
+            'iphocell',
+            'IphocellOrderStatus',
+            'ipc_os_id',
+            'ipc_os_name',
+            'ipc_os_name',
+            $filter_status
+        );
+
+        $status->setSize('100%');
+
+        $opening_date = new TDate('opening_date');
+        $opening_date->setMask('dd/mm/yyyy');
+        $opening_date->setDatabaseMask('yyyy-mm-dd');
+
+        $prev_date = new TDate('prev_date');
+        $prev_date->setMask('dd/mm/yyyy');
+        $prev_date->setDatabaseMask('yyyy-mm-dd');
+
+        $row = $this->form->addFields(
+            [new TLabel('Digite o que procura:'), $search],
+            [new TLabel('Data de abertura:'), $opening_date],
+            [new TLabel('Data de previsão:'), $prev_date]
+        );
+
+        $row->layout = ['col-sm-6', 'col-sm-3', 'col-sm-3'];
+
+        $row = $this->form->addFields(
+            [new TLabel('Cliente:'), $customer],
+            [new TLabel('Status:'), $status]
+        );
+
+        $row->layout = ['col-sm-6', 'col-sm-6'];
 
         // add form actions
         $this->form->addAction('Buscar', new TAction([$this, 'onSearch']), 'fa:search blue');
@@ -63,7 +120,7 @@ class IphoCellServiceOrderList extends TPage
         $this->form->addActionLink('Novo', new TAction(['IphoCellClientForm', 'onClear']), 'fa:plus-circle green');
 
         // keep the form filled with the search data
-        $this->form->setData(TSession::getValue('IphoCellServiceOrder_filter_data'));
+//        $this->form->setData(TSession::getValue('IphoCellServiceOrder_filter_data'));
 
         // creates the DataGrid
         $this->datagrid = new BootstrapDatagridWrapper(new TDataGrid);
@@ -156,9 +213,10 @@ class IphoCellServiceOrderList extends TPage
 
     function clearFilters()
     {
-        TSession::setValue('Find_name_filter', null);
-        TSession::setValue('Name_filter', null);
-        TSession::setValue('IphoCellClientList_filter_data', null);
+        TSession::setValue('IphoCellServiceOrder_find_search_title_filter', null);
+        TSession::setValue('IphoCellServiceOrder_find_search_description_filter', null);
+        TSession::setValue('IphoCellServiceOrder_find_customer_filter', null);
+        TSession::setValue('IphoCellServiceOrder_filter_data', null);
         $this->form->clear();
     }
 
@@ -199,25 +257,18 @@ class IphoCellServiceOrderList extends TPage
         // get the search form data
         $data = $this->form->getData();
 
-        if (isset($data->name)) {
-            $filter = new TFilter('ipc_so_title', 'like', "%{$data->name}%");
+//        TSession::setValue('IphoCellServiceOrder_filter_data', $data);
 
-            // stores the filter in the session
-            TSession::setValue('Find_name_filter', $filter);
-            TSession::setValue('Name_filter', $data->name);
-            TSession::setValue('IphoCellServiceOrder_filter_data', (object)['name' => $data->name]);
-
-            // fill the form with data again
-            $this->form->setData($data);
-        }
+        // fill the form with data again
+        $this->form->setData($data);
 
         $param = array();
         $param['offset'] = 0;
         $param['first_page'] = 1;
-        $this->onReload($param);
+        $this->onReload($param, $data);
     }
 
-    public function onReload($param = NULL)
+    public function onReload($param = NULL, $data = null)
     {
         try {
             TTransaction::open('iphocell');
@@ -233,8 +284,32 @@ class IphoCellServiceOrderList extends TPage
             $criteria->setProperties($param); // order, offset
             $criteria->setProperty('limit', $limit);
 
-            if (TSession::getValue('Find_name_filter')) {
-                $criteria->add(TSession::getValue('Find_name_filter'));
+            if (isset($data->search) && !empty($data->search)) {
+                $filter_title = new TFilter('ipc_so_title', 'like', "%{$data->search}%");
+                $filter_description = new TFilter('ipc_so_description', 'like', "%{$data->search}%");
+
+                $criteria->add($filter_title, TExpression::OR_OPERATOR);
+                $criteria->add($filter_description, TExpression::OR_OPERATOR);
+            }
+
+            if (isset($data->customer_id) && !empty($data->customer_id)) {
+                $filter_customer = new TFilter('ipc_so_client_id', '=', $data->customer_id);
+                $criteria->add($filter_customer, TExpression::AND_OPERATOR);
+            }
+
+            if(isset($data->status_id) && !empty($data->status_id)) {
+                $filter_status = new TFilter('ipc_so_status_id', '=', $data->status_id);
+                $criteria->add($filter_status, TExpression::AND_OPERATOR);
+            }
+
+            if(isset($data->opening_date) && !empty($data->opening_date)) {
+                $filter_opening_date = new TFilter('ipc_so_opening_date', 'LIKE', "%$data->opening_date%");
+                $criteria->add($filter_opening_date, TExpression::AND_OPERATOR);
+            }
+
+            if(isset($data->prev_date) && !empty($data->prev_date)) {
+                $filter_prev_date = new TFilter('ipc_so_prediction_date', 'LIKE', "%$data->prev_date%");
+                $criteria->add($filter_prev_date, TExpression::AND_OPERATOR);
             }
 
             $objects = $repository->load($criteria);

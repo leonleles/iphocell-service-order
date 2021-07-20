@@ -67,9 +67,12 @@
     </menuitem>
 
     <menuitem label='Manutenções'>
-        <icon>fa:users fa-fw</icon>
-        <action>IphoCellServiceOrderList</action>
+        <icon>fa:cog fa-fw</icon>
         <menu>
+            <menuitem label='Todas'>
+                <icon>fa:list fa-fw</icon>
+                <action>IphoCellServiceOrderList</action>
+            </menuitem>
             <menuitem label='Consulta'>
                 <icon>fa:search fa-fw</icon>
                 <action>IphoCellConsultService</action>
