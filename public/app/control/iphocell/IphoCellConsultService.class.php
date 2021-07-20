@@ -153,7 +153,6 @@ class IphoCellConsultService extends TPage
             TTransaction::open('iphocell');
 
             $this->getCustomer($data);
-            $this->getLastService();
 
             $lastServiceFormatted = $this->last_service;
 
@@ -161,6 +160,8 @@ class IphoCellConsultService extends TPage
                 new TMessage('error', 'Não encontramos seu usuário. Verifique os dados e tente novamente!');
                 return;
             }
+
+            $this->getLastService();
 
             if (empty($this->last_service)) {
                 new TMessage('warning', 'Não encontramos serviços para os dados informados.');

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="929e2f2a-ebe3-4c22-8751-13f0a6f58b42" name="web" url="http://iphocell.com.br">
+        <fileTransfer rootFolder="/cliente.iphocell.com.br" host="iphocell.com.br" port="21">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

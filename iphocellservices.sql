@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Tempo de geração: 20/07/2021 às 15:46
+-- Tempo de geração: 20/07/2021 às 20:17
 -- Versão do servidor: 8.0.26
 -- Versão do PHP: 7.4.20
 
@@ -34,17 +34,6 @@ CREATE TABLE `iphocell_client` (
   `ipc_client_birthday` date NOT NULL,
   `ipc_client_exclude` int DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Despejando dados para a tabela `iphocell_client`
---
-
-INSERT INTO `iphocell_client` (`ipc_client_id`, `ipc_client_name`, `ipc_client_cpf`, `ipc_client_birthday`, `ipc_client_exclude`) VALUES
-(32, 'Leonardo Leles Alves', '05063839118', '2026-09-17', 0),
-(33, 'A Maria betânica', '05063839118', '2021-07-13', 0),
-(35, 'José Alves', '12312321321', '2021-07-17', 0),
-(36, 'Joana silve', '12312331313', '2021-07-22', 0),
-(37, 'Leonardo Leles Alves', '12312321321', '2021-07-20', 0);
 
 -- --------------------------------------------------------
 
@@ -84,13 +73,6 @@ CREATE TABLE `iphocell_service_order` (
   `ipc_so_client_id` int NOT NULL,
   `ipc_so_exclude` int NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Despejando dados para a tabela `iphocell_service_order`
---
-
-INSERT INTO `iphocell_service_order` (`ipc_so_id`, `ipc_so_title`, `ipc_so_description`, `ipc_so_opening_date`, `ipc_so_prediction_date`, `ipc_so_status_id`, `ipc_so_client_id`, `ipc_so_exclude`) VALUES
-(3, 'Xiomi Redmi 5', '- Trocar tela e outros periféricos;', '2021-07-20 13:02:48', '2021-07-30 10:02:16', 1, 32, 0);
 
 -- --------------------------------------------------------
 
@@ -140,7 +122,18 @@ INSERT INTO `system_access_log` (`id`, `sessionid`, `login`, `login_time`, `logi
 (22, '61071bc2c0482c0e2acdbce4ee3a7045', 'admin', '2021-07-20 09:22:39', '2021', '07', '20', '2021-07-20 09:26:33', 'N', '172.18.0.1'),
 (23, '9c6e694c9208b479f6d8cedfd716709d', 'admin', '2021-07-20 09:29:47', '2021', '07', '20', '2021-07-20 10:05:46', 'N', '172.18.0.1'),
 (24, 'ea481e628f083b2d968d3368dcaab032', 'admin', '2021-07-20 10:05:48', '2021', '07', '20', '2021-07-20 12:05:50', 'N', '172.18.0.1'),
-(25, '19563d2921e92db17e0a96b3dce157de', 'admin', '2021-07-20 12:05:52', '2021', '07', '20', NULL, 'N', '172.18.0.1');
+(25, '19563d2921e92db17e0a96b3dce157de', 'admin', '2021-07-20 12:05:52', '2021', '07', '20', '2021-07-20 14:05:19', 'N', '172.18.0.1'),
+(26, '56a39450d78aca9718cefa3ca87e6a67', 'admin', '2021-07-20 14:05:21', '2021', '07', '20', '2021-07-20 14:34:19', 'N', '172.18.0.1'),
+(27, '83d8b2270f3f5913eef69fdb0008e0dd', 'admin', '2021-07-20 14:34:20', '2021', '07', '20', '2021-07-20 14:58:18', 'N', '172.18.0.1'),
+(28, '3363d5609b3a5a42130b3b9a8495f0d4', 'admin', '2021-07-20 14:58:21', '2021', '07', '20', '2021-07-20 14:58:26', 'N', '172.18.0.1'),
+(29, 'c1d73f47fe80546218fb98755c341c03', 'admin', '2021-07-20 14:59:07', '2021', '07', '20', NULL, 'N', '172.18.0.1'),
+(30, '8239d9f76f0793a4f5051b25c10c7c98', 'admin', '2021-07-20 16:39:13', '2021', '07', '20', '2021-07-20 16:49:29', 'N', '172.18.0.1'),
+(31, 'e83d0c69c6351dbec2c628e31ff3d5b8', 'admin', '2021-07-20 16:49:22', '2021', '07', '20', '2021-07-20 16:50:20', 'N', '172.18.0.1'),
+(32, '90b759fa11ef1f0865560786d20d7495', 'admin', '2021-07-20 17:00:04', '2021', '07', '20', NULL, 'N', '172.18.0.1'),
+(33, '336c98832b289eecc5847f796573ac66', 'leonleles', '2021-07-20 17:02:13', '2021', '07', '20', '2021-07-20 17:04:39', 'N', '192.168.100.12'),
+(34, 'b1a59d138407ee728651089d36336328', 'leonleles', '2021-07-20 17:04:42', '2021', '07', '20', '2021-07-20 17:05:29', 'N', '192.168.100.12'),
+(35, '6fda366e59fe2a82907aed4715196d95', 'leonleles', '2021-07-20 17:05:44', '2021', '07', '20', '2021-07-20 17:06:27', 'N', '192.168.100.12'),
+(36, '03a668da9404fd397ba30e04267b6e19', 'leonleles', '2021-07-20 17:06:30', '2021', '07', '20', '2021-07-20 17:06:45', 'N', '192.168.100.12');
 
 -- --------------------------------------------------------
 
@@ -292,11 +285,21 @@ INSERT INTO `system_group_program` (`id`, `system_group_id`, `system_program_id`
 (25, 1, 39),
 (26, 1, 40),
 (27, 1, 62),
-(28, 2, 62),
 (29, 1, 63),
-(30, 2, 63),
 (31, 1, 65),
-(32, 2, 65);
+(33, 1, 66),
+(34, 2, 12),
+(35, 2, 13),
+(36, 2, 16),
+(37, 2, 17),
+(38, 2, 18),
+(39, 2, 19),
+(40, 2, 20),
+(41, 2, 62),
+(42, 2, 63),
+(43, 2, 64),
+(44, 2, 65),
+(45, 2, 66);
 
 -- --------------------------------------------------------
 
@@ -425,7 +428,8 @@ INSERT INTO `system_program` (`id`, `name`, `controller`) VALUES
 (62, 'Listagem de Clientes', 'IphoCellClientList'),
 (63, 'Formulário de cliente', 'IphoCellClientForm'),
 (64, 'Consulta de Serviço', 'IphoCellConsultService'),
-(65, 'Manutenções', 'IphoCellServiceOrderList');
+(65, 'Manutenções', 'IphoCellServiceOrderList'),
+(66, 'Formulário de manutenção', 'IphoCellServiceOrderForm');
 
 -- --------------------------------------------------------
 
@@ -719,7 +723,7 @@ ALTER TABLE `iphocell_order_status`
 -- AUTO_INCREMENT de tabela `iphocell_service_order`
 --
 ALTER TABLE `iphocell_service_order`
-  MODIFY `ipc_so_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `ipc_so_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- Restrições para tabelas despejadas
