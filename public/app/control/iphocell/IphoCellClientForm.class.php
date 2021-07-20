@@ -53,7 +53,7 @@ class IphoCellClientForm extends TPage
 
         $this->form->addAction('Salvar', new TAction([$this, 'onSave']), 'fa:save green');
         $this->form->addActionLink('Limpar', new TAction([$this, 'onClear']), 'fa:eraser red');
-        // $this->form->addActionLink('Listing',  new TAction(['CompleteDataGridView', 'onReload']), 'fa:table blue');
+         $this->form->addActionLink('Clientes',  new TAction(['IphoCellClientList', 'onReload']), 'fa:table blue');
 
         $vbox = new TVBox;
         $vbox->style = 'width: 100%';

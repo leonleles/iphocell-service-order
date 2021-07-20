@@ -4,6 +4,7 @@ use Adianti\Control\TAction;
 use Adianti\Control\TPage;
 use Adianti\Database\TCriteria;
 use Adianti\Database\TFilter;
+use Adianti\Database\TRepository;
 use Adianti\Database\TTransaction;
 use Adianti\Registry\TSession;
 use Adianti\Widget\Container\TPanelGroup;
@@ -41,17 +42,10 @@ class IphoCellClientList extends TPage
         $this->setActiveRecord('IphoCellClient');       // defines the active record
         $this->setDefaultOrder('ipc_client_name', 'asc');  // define the default order
 
-        $form_filters = TSession::getValue('IphoCellClientList_filter_data');
-
         $criteria = new TCriteria();
         $criteria->add(new TFilter('ipc_client_exclude', '=', 0));
 
-        if (isset($form_filters->name) && $name_filter = $form_filters->name) {
-            $criteria->add(new TFilter('ipc_client_name', 'LIKE', $name_filter));
-        }
-
         $this->setCriteria($criteria);
-
 
         // creates the form
         $this->form = new BootstrapFormBuilder('form_search_costumers');
@@ -62,8 +56,8 @@ class IphoCellClientList extends TPage
 
         // add form actions
         $this->form->addAction('Buscar', new TAction([$this, 'onSearch']), 'fa:search blue');
+        $this->form->addActionLink('Limpar', new TAction([$this, 'onClear']), 'fa:eraser red');
         $this->form->addActionLink('Novo', new TAction(['IphoCellClientForm', 'onClear']), 'fa:plus-circle green');
-        $this->form->addActionLink('Limpar', new TAction([$this, 'clear']), 'fa:eraser red');
 
         // keep the form filled with the search data
         $this->form->setData(TSession::getValue('IphoCellClientList_filter_data'));
@@ -111,10 +105,18 @@ class IphoCellClientList extends TPage
     /**
      * Clear filters
      */
-    function clear()
+    function onClear()
     {
         $this->clearFilters();
         $this->onReload();
+    }
+
+    function clearFilters()
+    {
+        TSession::setValue('Find_name_filter', null);
+        TSession::setValue('Name_filter', null);
+        TSession::setValue('IphoCellClientList_filter_data', null);
+        $this->form->clear();
     }
 
     public function onDelete($param)
@@ -147,6 +149,76 @@ class IphoCellClientList extends TPage
             new TMessage('error', '<b>Error</b> ' . $e->getMessage()); // shows the exception error message
             TTransaction::rollback(); // undo all pending operations
         }
+    }
+
+    function onSearch()
+    {
+        // get the search form data
+        $data = $this->form->getData();
+
+        if (isset($data->name)) {
+            $filter = new TFilter('ipc_client_name', 'like', "%{$data->name}%");
+
+            // stores the filter in the session
+            TSession::setValue('Find_name_filter', $filter);
+            TSession::setValue('Name_filter', $data->name);
+            TSession::setValue('IphoCellClientList_filter_data', (object)['name' => $data->name]);
+
+            // fill the form with data again
+            $this->form->setData($data);
+        }
+
+        $param = array();
+        $param['offset'] = 0;
+        $param['first_page'] = 1;
+        $this->onReload($param);
+    }
+
+    public function onReload($param = NULL)
+    {
+        try {
+            TTransaction::open('iphocell');
+
+            $repository = new TRepository('IphoCellClient');
+            $limit = 10;
+
+            $criteria = new TCriteria;
+
+            $param['order'] = 'ipc_client_name';
+            $param['direction'] = 'asc';
+
+            $criteria->setProperties($param); // order, offset
+            $criteria->setProperty('limit', $limit);
+
+            if (TSession::getValue('Find_name_filter')) {
+                $criteria->add(TSession::getValue('Find_name_filter'));
+            }
+
+            $objects = $repository->load($criteria);
+
+            $this->datagrid->clear();
+
+            if ($objects) {
+                foreach ($objects as $object) {
+                    $this->datagrid->addItem($object);
+                }
+            }
+
+            $criteria->resetProperties();
+            $count = $repository->count($criteria);
+
+            $this->pageNavigation->setCount($count); // count of records
+            $this->pageNavigation->setProperties($param); // order, page
+            $this->pageNavigation->setLimit($limit); // limit
+
+            TTransaction::close();
+            $this->loaded = true;
+        } catch (Exception $e) {
+            new TMessage('error', $e->getMessage());
+            TTransaction::rollback(); // undo all pending operations
+        }
+
+        $this->loaded = TRUE;
     }
 
 }
