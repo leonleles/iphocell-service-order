@@ -66,6 +66,11 @@
         </menu>
     </menuitem>
 
+    <menuitem label='Consulta de Serviço'>
+        <icon>fa:configs fa-fw</icon>
+        <action>IphoCellConsultService</action>
+    </menuitem>
+
     <menuitem label='_t{Documents}'>
         <icon>far:file-alt fa-fw</icon>
         <menu>
