@@ -125,7 +125,7 @@ class IphoCellConsultService extends TPage
 
             $repository = new TRepository('IphoCellServiceOrder');
             $criteria = new TCriteria;
-            $criteria->setProperties(['limit' => 1, 'order' => 'ipc_so_opening_date', 'diretion' => 'desc']);
+            $criteria->setProperties(['limit' => 1, 'order' => 'ipc_so_opening_date', 'direction' => 'desc']);
 
 
             $filter_explude = new TFilter('ipc_so_exclude', '=', "0");
