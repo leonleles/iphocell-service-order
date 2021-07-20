@@ -1,5 +1,18 @@
 <?php
 
+use Adianti\Control\TAction;
+use Adianti\Control\TPage;
+use Adianti\Database\TTransaction;
+use Adianti\Validator\TRequiredValidator;
+use Adianti\Widget\Container\TVBox;
+use Adianti\Widget\Dialog\TMessage;
+use Adianti\Widget\Form\TDate;
+use Adianti\Widget\Form\TEntry;
+use Adianti\Widget\Form\THidden;
+use Adianti\Widget\Form\TLabel;
+use Adianti\Widget\Util\TXMLBreadCrumb;
+use Adianti\Wrapper\BootstrapFormBuilder;
+
 class IphoCellClientForm extends TPage
 {
     private $form;
@@ -13,27 +26,32 @@ class IphoCellClientForm extends TPage
         $this->form->setFieldSizes('100%');
         $this->form->generateAria();
 
-        $id       = new THidden('ipc_client_id');
-        $name     = new TEntry('ipc_client_name');
-        $cpf     = new TEntry('ipc_client_cpf');
-        $birthday     = new TDate('ipc_client_birthday');
+        $id = new THidden('ipc_client_id');
+        $name = new TEntry('ipc_client_name');
+        $cpf = new TEntry('ipc_client_cpf');
+        $cpf->setMask('000.000.000-00', true);
+        $birthday = new TDate('ipc_client_birthday');
+        $birthday->setMask('dd/mm/yyyy');
+        $birthday->setDatabaseMask('yyyy-mm-dd');
+
+        $name->addValidation('Nome', new TRequiredValidator);
+        $cpf->addValidation('CPF', new TRequiredValidator);
+        $birthday->addValidation('Data de Nascimento', new TRequiredValidator);
 
         $this->form->addFields(
             [$id]
         );
 
         $row = $this->form->addFields(
-            [new TLabel('asdasd:'), $name],
-            [new TLabel('CPF:'),  $cpf],
+            [new TLabel('Nome:'), $name],
+            [new TLabel('CPF:'), $cpf],
             [new TLabel('Data de Nascimento:'), $birthday]
         );
 
         $row->layout = ['col-sm-6', 'col-sm-3', 'col-sm-3'];
 
-        $name->addValidation('Name', new TRequiredValidator);
-
         $this->form->addAction('Salvar', new TAction([$this, 'onSave']), 'fa:save green');
-        $this->form->addActionLink('Limpar',  new TAction([$this, 'onClear']), 'fa:eraser red');
+        $this->form->addActionLink('Limpar', new TAction([$this, 'onClear']), 'fa:eraser red');
         // $this->form->addActionLink('Listing',  new TAction(['CompleteDataGridView', 'onReload']), 'fa:table blue');
 
         $vbox = new TVBox;
@@ -42,6 +60,7 @@ class IphoCellClientForm extends TPage
         $vbox->add($this->form);
         parent::add($vbox);
     }
+
     /**
      * method onSave()
      * Executed whenever the user clicks at the save button
@@ -56,7 +75,7 @@ class IphoCellClientForm extends TPage
             $data = $this->form->getData();
 
             $object = new IphoCellClient;
-            $object->fromArray((array) $data);
+            $object->fromArray((array)$data);
             $object->store();
 
             $this->form->setData($object);
@@ -83,6 +102,7 @@ class IphoCellClientForm extends TPage
                 $key = $param['ipc_client_id'];
                 TTransaction::open('iphocell');
                 $object = new IphoCellClient($key);
+
                 $this->form->setData($object);
                 TTransaction::close();
             } else {

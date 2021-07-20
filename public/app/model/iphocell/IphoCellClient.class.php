@@ -1,5 +1,7 @@
 <?php
 
+use Adianti\Database\TRecord;
+
 class IphoCellClient extends TRecord
 {
     const TABLENAME = 'iphocell_client';
