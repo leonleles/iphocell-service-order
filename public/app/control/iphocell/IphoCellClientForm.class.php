@@ -2,6 +2,9 @@
 
 use Adianti\Control\TAction;
 use Adianti\Control\TPage;
+use Adianti\Database\TCriteria;
+use Adianti\Database\TFilter;
+use Adianti\Database\TRepository;
 use Adianti\Database\TTransaction;
 use Adianti\Validator\TRequiredValidator;
 use Adianti\Widget\Container\TVBox;
@@ -53,7 +56,7 @@ class IphoCellClientForm extends TPage
 
         $this->form->addAction('Salvar', new TAction([$this, 'onSave']), 'fa:save green');
         $this->form->addActionLink('Limpar', new TAction([$this, 'onClear']), 'fa:eraser red');
-         $this->form->addActionLink('Clientes',  new TAction(['IphoCellClientList', 'onReload']), 'fa:table blue');
+        $this->form->addActionLink('Clientes', new TAction(['IphoCellClientList', 'onReload']), 'fa:table blue');
 
         $vbox = new TVBox;
         $vbox->style = 'width: 100%';
@@ -75,15 +78,30 @@ class IphoCellClientForm extends TPage
 
             $data = $this->form->getData();
 
-            $object = new IphoCellClient;
-            $object->fromArray((array)$data);
-            $object->store();
+            $repository = new TRepository('IphoCellClient');
+            $criteria = new TCriteria;
+            $criteria->setProperties(['limit' => 1]);
 
-            $this->form->setData($object);
+            $filter_cpf = new TFilter('ipc_client_cpf', '=', trim($data->ipc_client_cpf));
+            $criteria->add($filter_cpf);
 
-            TTransaction::close();
+            $result = $repository->load($criteria)[0] ?? [];
 
-            new TMessage('info', 'Cliente adicionado com sucesso');;
+            if (!empty($result)) {
+                $this->form->setData($data);
+                TTransaction::close();
+                new TMessage('error', "O CPF informado já está em uso no cliente '$data->ipc_client_name'!");
+            } else {
+                $object = new IphoCellClient;
+                $object->fromArray((array)$data);
+                $object->store();
+
+                $this->form->setData($object);
+
+                TTransaction::close();
+                new TMessage('info', 'Cliente adicionado com sucesso');
+            }
+
         } catch (Exception $e) {
             new TMessage('error', $e->getMessage());
             $this->form->setData($this->form->getData());

@@ -55,7 +55,7 @@ class IphoCellServiceOrderList extends TPage
 
         // creates the form
         $this->form = new BootstrapFormBuilder('form_search_services');
-        $this->form->setFormTitle('Manutenções');
+        $this->form->setFormTitle('Procurar');
 
         $filter_customer = new TCriteria;
         $filter_customer->add(new TFilter('ipc_client_exclude', '=', '0'));
