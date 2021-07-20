@@ -73,6 +73,10 @@
                 <icon>fa:list fa-fw</icon>
                 <action>IphoCellServiceOrderList</action>
             </menuitem>
+            <menuitem label='Nova'>
+                <icon>fa:plus fa-fw</icon>
+                <action>IphoCellServiceOrderForm</action>
+            </menuitem>
             <menuitem label='Consulta'>
                 <icon>fa:search fa-fw</icon>
                 <action>IphoCellConsultService</action>

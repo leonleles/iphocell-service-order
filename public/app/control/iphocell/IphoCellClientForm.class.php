@@ -44,9 +44,9 @@ class IphoCellClientForm extends TPage
         );
 
         $row = $this->form->addFields(
-            [new TLabel('Nome:'), $name],
-            [new TLabel('CPF:'), $cpf],
-            [new TLabel('Data de Nascimento:'), $birthday]
+            [new TLabel('Nome: *'), $name],
+            [new TLabel('CPF: *'), $cpf],
+            [new TLabel('Data de Nascimento: *'), $birthday]
         );
 
         $row->layout = ['col-sm-6', 'col-sm-3', 'col-sm-3'];

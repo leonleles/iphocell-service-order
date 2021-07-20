@@ -65,6 +65,7 @@ class IphoCellServiceOrderList extends TPage
 
         $search = new TEntry('search');
         $search->setSize('100%');
+        $this->form->setFieldSizes('100%');
         $this->form->generateAria();
 
         $customer = new TDBUniqueSearch(
@@ -85,7 +86,7 @@ class IphoCellServiceOrderList extends TPage
             'IphocellOrderStatus',
             'ipc_os_id',
             'ipc_os_name',
-            'ipc_os_name',
+            'ipc_os_id',
             $filter_status
         );
 
@@ -117,7 +118,7 @@ class IphoCellServiceOrderList extends TPage
         // add form actions
         $this->form->addAction('Buscar', new TAction([$this, 'onSearch']), 'fa:search blue');
         $this->form->addActionLink('Limpar', new TAction([$this, 'onClear']), 'fa:eraser red');
-        $this->form->addActionLink('Novo', new TAction(['IphoCellClientForm', 'onClear']), 'fa:plus-circle green');
+        $this->form->addActionLink('Novo', new TAction(['IphoCellServiceOrderForm', 'onClear']), 'fa:plus-circle green');
 
         // keep the form filled with the search data
 //        $this->form->setData(TSession::getValue('IphoCellServiceOrder_filter_data'));
@@ -170,7 +171,7 @@ class IphoCellServiceOrderList extends TPage
 
         $col_name->setAction(new TAction([$this, 'onReload']), ['order' => 'ipc_so_title']);
 
-        $action1 = new TDataGridAction(['IphoCellClientForm', 'onEdit'], ['key' => '{ipc_so_id}']);
+        $action1 = new TDataGridAction(['IphoCellServiceOrderForm', 'onEdit'], ['key' => '{ipc_so_id}']);
         $action1->setLabel('Editar');
         $action1->setImage('fa:edit blue');
 
@@ -235,9 +236,9 @@ class IphoCellServiceOrderList extends TPage
     {
         try {
             TTransaction::open('iphocell');
-            $object = new IphoCellClient($param['ipc_so_id'], FALSE);
+            $object = new IphoCellServiceOrder($param['ipc_so_id'], FALSE);
 
-            $object->ipc_client_exclude = 1;
+            $object->ipc_so_exclude = 1;
 
             $object->fromArray((array)$object);
             $object->store();
@@ -277,6 +278,7 @@ class IphoCellServiceOrderList extends TPage
             $limit = 10;
 
             $criteria = new TCriteria;
+            $criteria->add(new TFilter('ipc_so_exclude', '=', 0));
 
             $param['order'] = 'ipc_so_opening_date';
             $param['direction'] = 'desc';
